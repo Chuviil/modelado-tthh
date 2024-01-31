@@ -1,9 +1,11 @@
 ﻿@page "/login"
 @using ModeladoTTHH.Models
 @using ModeladoTTHH.Services
+@using ModeladoTTHH.Classes
+@using ModeladoTTHH.Commands
 @layout NoLayout
 @inject IEmisorService EmisorService
-@inject NavigationManager NavigationManager
+@inject NavigationManager NavigationManager;
 
 @if (_listaEmisores is null)
 {
@@ -73,6 +75,13 @@ else
 }
 
 @code {
+    private CommandInvoker _invoker = new CommandInvoker();
+    private RedirectToRootCommand _redirectToRootCommand;
+
+    protected override void OnInitialized()
+    {
+        _redirectToRootCommand = new RedirectToRootCommand(NavigationManager);
+    }
 
     private UsuarioDto _usuario = new UsuarioDto();
 
@@ -85,7 +94,8 @@ else
 
     protected void TryLoginUser()
     {
-        NavigationManager.NavigateTo("/");
+        _invoker.SetCommand(_redirectToRootCommand);
+        _invoker.ExecuteCommand();
     }
 
 }
